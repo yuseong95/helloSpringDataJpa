@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 
 <head th:insert="~{common :: commonHead}">
   <title>Product Manager</title>
@@ -8,18 +9,38 @@
 
 <body>
 <div class="container">
-  <h1 class="mt-5">Product List</h1>
-  <a class="btn btn-primary mb-3" th:href="@{/products/new}">Create New Product</a>
+  <div class="d-flex justify-content-between align-items-center mt-5 mb-4">
+    <h1>Product List</h1>
+
+    <div>
+      <span sec:authentication="principal.username" class="me-3">User</span>
+      <form th:action="@{/logout}" method="post" class="d-inline">
+        <input type="submit" class="btn btn-outline-danger btn-sm" value="Logout"/>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin only: Create new product button -->
+  <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-3">
+    <a class="btn btn-primary" th:href="@{/products/new}">Create New Product</a>
+    <a class="btn btn-secondary" th:href="@{/admin/home}">Admin Page</a>
+  </div>
+
+  <!-- Regular users: Home button only -->
+  <div sec:authorize="hasRole('ROLE_USER') and !hasRole('ROLE_ADMIN')" class="mb-3">
+    <a class="btn btn-secondary" th:href="@{/home}">Home</a>
+    <span class="text-muted">* Only administrators can create/edit/delete products.</span>
+  </div>
 
   <table class="table table-bordered">
-    <thead>
+    <thead class="table-dark">
     <tr>
       <th>Product ID</th>
       <th>Name</th>
       <th>Brand</th>
       <th>Made In</th>
       <th>Price</th>
-      <th>Actions</th>
+      <th sec:authorize="hasRole('ROLE_ADMIN')">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -29,16 +50,16 @@
       <td th:text="${product.brand}">Brand</td>
       <td th:text="${product.madeIn}">Made in</td>
       <td th:text="${product.price}">Price</td>
-      <td>
+      <td sec:authorize="hasRole('ROLE_ADMIN')">
         <a class="btn btn-primary btn-sm" th:href="@{'/products/edit/' + ${product.id}}">Edit</a>
-        <a class="btn btn-danger btn-sm" th:href="@{'/products/delete/' + ${product.id}}">Delete</a>
+        <a class="btn btn-danger btn-sm" th:href="@{'/products/delete/' + ${product.id}}"
+           onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
       </td>
     </tr>
     </tbody>
   </table>
 </div>
 
-<!-- Bootstrap JS fragment 삽입 -->
 <div th:insert="~{common :: commonScript}"></div>
 </body>
 </html>

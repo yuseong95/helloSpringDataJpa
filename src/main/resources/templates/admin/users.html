@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>사용자 목록</title>
+</head>
+<body>
+<h1>전체 사용자 목록</h1>
+
+<p>관리자 전용 페이지입니다.</p>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>이메일</th>
+        <th>권한</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}">ID</td>
+        <td th:text="${user.email}">Email</td>
+        <td>
+            <span th:each="role : ${user.roles}" th:text="${role.rolename} + ' '">Role</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p>
+    <a th:href="@{/admin/home}">관리자 홈</a> |
+    <a th:href="@{/home}">메인 홈</a>
+</p>
+
+</body>
+</html>

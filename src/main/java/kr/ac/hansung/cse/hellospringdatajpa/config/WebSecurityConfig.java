@@ -6,14 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
 public class WebSecurityConfig {
 
     @Autowired
@@ -29,29 +27,41 @@ public class WebSecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    private static final String[] PUBLIC_MATCHERS = {
+            "/webjars/**",
+            "/css/**",
+            "/js/**",
+            "/images/**",
+            "/about/**",
+            "/contact/**",
+            "/error/**",
+            "/console/**"
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/home", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/products/new", "/products/edit/**", "/products/delete/**", "/products/save").hasRole("ADMIN")
+                        .requestMatchers(PUBLIC_MATCHERS).permitAll()
+                        .requestMatchers("/", "/home", "/signup", "/login").permitAll()
+                        .requestMatchers("/products/new", "/products/save", "/products/edit/**", "/products/delete/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/products", "/products/").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
-                        .failureUrl("/login?error=true")
+                        .defaultSuccessUrl("/products")
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
                 .exceptionHandling(exceptions -> exceptions
-                        .accessDeniedPage("/403")
+                        .accessDeniedPage("/accessDenied")
                 )
                 .userDetailsService(customUserDetailsService);
 
