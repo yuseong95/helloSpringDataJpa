@@ -40,17 +40,18 @@ public class ProductController {
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute("product") Product product, Model model) {
 
-        // Validation - Price must be 0 or greater
+        // 가격 유효성 검사: 0 이상이어야 함
         if (product.getPrice() < 0) {
             model.addAttribute("priceError", "Price must be 0 or greater.");
+            // 수정 모드인지 신규 등록 모드인지 구분하여 해당 페이지로 돌아감
             if (product.getId() != null) {
-                return "edit_product";
+                return "edit_product";  // 수정 모드
             } else {
-                return "new_product";
+                return "new_product";   // 신규 등록 모드
             }
         }
 
-        // Required field validation
+        // 필수 필드 검사: 상품명은 반드시 입력
         if (product.getName() == null || product.getName().trim().isEmpty()) {
             model.addAttribute("nameError", "Please enter product name.");
             if (product.getId() != null) {
@@ -60,6 +61,7 @@ public class ProductController {
             }
         }
 
+        // 모든 유효성 검사 통과 시 저장
         service.save(product);
         return "redirect:/products";
     }

@@ -33,11 +33,12 @@ public class AdminController {
         logger.info("=== AdminController.listUsers() 호출됨 ===");
 
         try {
+            // 1. 모든 사용자 조회
             List<MyUser> users = userRepository.findAll();
             logger.info("조회된 사용자 수: {}", users.size());
 
             for (MyUser user : users) {
-                // 여기서 roles에 접근해서 Lazy Loading 강제 실행
+                // 2. Lazy Loading 강제 실행으로 역할 정보도 함께 로딩
                 if (user.getRoles() != null) {
                     user.getRoles().size(); // Lazy Loading 강제 실행
                 }
@@ -51,7 +52,7 @@ public class AdminController {
                             logger.info("  -> 역할: {}", role.getRolename()));
                 }
             }
-
+            // 3. 템플릿에 사용자 목록 전달
             model.addAttribute("users", users);
             logger.info("Model에 users 추가 완료");
 

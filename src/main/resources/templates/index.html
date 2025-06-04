@@ -20,13 +20,13 @@
     </div>
   </div>
 
-  <!-- Admin only: Create new product button -->
+  <!-- 관리자만 새 상품 등록 버튼 표시 -->
   <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-3">
     <a class="btn btn-primary" th:href="@{/products/new}">Create New Product</a>
     <a class="btn btn-secondary" th:href="@{/admin/home}">Admin Page</a>
   </div>
 
-  <!-- Regular users: Home button only -->
+  <!-- 일반 사용자는 홈 버튼만 표시 -->
   <div sec:authorize="hasRole('ROLE_USER') and !hasRole('ROLE_ADMIN')" class="mb-3">
     <a class="btn btn-secondary" th:href="@{/home}">Home</a>
     <span class="text-muted">* Only administrators can create/edit/delete products.</span>
@@ -40,6 +40,7 @@
       <th>Brand</th>
       <th>Made In</th>
       <th>Price</th>
+      <!-- 관리자만 Actions 컬럼 표시 -->
       <th sec:authorize="hasRole('ROLE_ADMIN')">Actions</th>
     </tr>
     </thead>
@@ -50,6 +51,7 @@
       <td th:text="${product.brand}">Brand</td>
       <td th:text="${product.madeIn}">Made in</td>
       <td th:text="${product.price}">Price</td>
+      <!-- 관리자만 Edit/Delete 버튼 표시 -->
       <td sec:authorize="hasRole('ROLE_ADMIN')">
         <a class="btn btn-primary btn-sm" th:href="@{'/products/edit/' + ${product.id}}">Edit</a>
         <a class="btn btn-danger btn-sm" th:href="@{'/products/delete/' + ${product.id}}"

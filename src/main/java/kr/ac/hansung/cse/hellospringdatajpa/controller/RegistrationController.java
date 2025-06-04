@@ -29,24 +29,27 @@ public class RegistrationController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signupPost(@ModelAttribute("user") MyUser user, Model model) {
 
+        // 1. 이메일 중복 확인
         if (registrationService.checkEmailExists(user.getEmail())) {
             model.addAttribute("emailExists", true);
             return "signup";
         } else {
+            // 2. 기본 역할 부여
             List<MyRole> userRoles = new ArrayList<>();
 
             MyRole role = registrationService.findByRolename("ROLE_USER");
             userRoles.add(role);
 
-            // 특정 이메일 주소인 경우 ADMIN 역할 추가
+            // 3. 특정 이메일인 경우 관리자 권한 추가 부여
             if ("admin@hansung.ac.kr".equals(user.getEmail())) {
                 MyRole roleAdmin = registrationService.findByRolename("ROLE_ADMIN");
                 userRoles.add(roleAdmin);
             }
 
+            // 4. 사용자 생성 후 로그인 페이지로 리다이렉트
             registrationService.createUser(user, userRoles);
 
-            return "redirect:/login?signup";
+            return "redirect:/login?signup"; // 성공 메시지와 함께 로그인 페이지로
         }
     }
 }

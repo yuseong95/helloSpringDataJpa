@@ -18,12 +18,12 @@ public class MyRole {
     private Integer id;
 
     @Column(nullable=false, unique=true)
-    private String rolename;
+    private String rolename;// "ROLE_USER", "ROLE_ADMIN" 저장
 
     @ManyToMany(mappedBy="roles")
     private List<MyUser> users;
 
-    public MyRole(String rolename) {
+    public MyRole(String rolename) {// 역할 생성용 생성자
         this.rolename = rolename;
     }
 }

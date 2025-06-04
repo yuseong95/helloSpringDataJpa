@@ -24,14 +24,17 @@
             <h1 class="text-center mb-4">로그인</h1>
 
             <form method="post" th:action="@{/login}">
+                <!-- 로그인 실패 시 에러 메시지 -->
                 <div th:if="${param.error}" class="alert alert-danger" role="alert">
                     Invalid Email and Password.
                 </div>
 
+                <!-- 로그아웃 성공 시 알림 메시지 -->
                 <div th:if="${param.logout}" class="alert alert-info" role="alert">
                     Successfully logged out
                 </div>
 
+                <!-- 회원가입 완료 시 성공 메시지 -->
                 <div th:if="${param.signup}" class="alert alert-success" role="alert">
                     회원가입이 완료되었습니다. 로그인해주세요.
                 </div>
